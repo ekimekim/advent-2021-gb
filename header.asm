@@ -38,7 +38,7 @@ IntLCDC::
 section "Timer Interrupt handler", ROM0 [$50]
 ; A configurable amount of time has passed
 IntTimer::
-	reti
+	jp TimerHandler
 section "Serial Interrupt handler", ROM0 [$58]
 ; Serial transfer is complete
 IntSerial::

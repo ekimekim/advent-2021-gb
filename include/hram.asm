@@ -3,5 +3,9 @@ _G_HRAM EQU "true"
 
 RSSET $ff80
 
+; uint32 - Number of 2^13 Hz ticks elapsed since computation start
+; Only the middle 2 bytes are kept up to date, the bottom byte should be copied from TimerCounter
+; before outputting.
+Ticks rb 4
 
 ENDC
