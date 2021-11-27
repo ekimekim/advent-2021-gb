@@ -1,3 +1,6 @@
+include "hram.asm"
+include "longcalc.asm"
+include "macros.asm"
 
 SECTION "Dynamic memory", WRAMX, BANK[1]
 
@@ -9,7 +12,7 @@ Memory:
 SECTION "Allocator functions", ROM0
 
 
-InitAlloc::
+AllocInit::
 	ld A, LOW(Memory)
 	ld [AllocNext], A
 	ld A, HIGH(Memory)

@@ -11,4 +11,11 @@ Ticks rb 4
 ; ptr - Points to next available byte in allocator
 AllocNext rb 2
 
+; ptr - Points to next place to put chars when printing
+PrintNext rb 2
+
+; bool - Set to 1 then wait for it to become 0 to indicate new frame started
+WaitingForFrame rb 1
+
+
 ENDC

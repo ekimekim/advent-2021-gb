@@ -1,3 +1,4 @@
+include "longcalc.asm"
 
 SECTION "Conversion temp buffers", WRAM0
 
@@ -120,7 +121,7 @@ _Check5: MACRO
 	rl C
 
 	dec B
-	jr nz, .loop
+	jp nz, .loop
 
 
 ; Convert BCD from CDEHL into newly allocated str without leading zeroes, return str addr in HL
@@ -145,6 +146,7 @@ ENDM
 	_CheckZero H
 	_CheckZero L
 
+.zerofound
 	; if length is 0, length should be 1 for "0"
 	ld A, B
 	and A

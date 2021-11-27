@@ -1,5 +1,7 @@
 include "debug.asm"
 include "ioregs.asm"
+include "macros.asm"
+include "hram.asm"
 
 Section "Core Stack", WRAM0
 

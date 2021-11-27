@@ -1,3 +1,4 @@
+include "hram.asm"
 
 ; Warning: each of these sections can only be 8b long!
 section "Restart handler 0", ROM0 [$00]
@@ -29,6 +30,10 @@ Restart7::
 section "VBlank Interrupt handler", ROM0 [$40]
 ; triggered upon VBLANK period starting
 IntVBlank::
+	push AF
+	xor A
+	ld [WaitingForFrame], A
+	pop AF
 	reti
 section "LCDC Interrupt handler", ROM0 [$48]
 ; Also known as STAT handler

@@ -36,16 +36,22 @@ build/debug/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/debug
 build/release/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/release
 	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
 
-build/debug/tasks/%.gb: tasks/%.asm $(DEBUGOBJS)
+build/debug/tasks/%.o: tasks/%.asm build/debug/tasks
+	rgbasm -DDEBUG=1 -i include/ -v -o $@ $<
+
+build/release/tasks/%.o: tasks/%.asm build/release/tasks
+	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
+
+build/debug/tasks/%.gb: build/debug/tasks/%.o $(DEBUGOBJS)
 # note padding with 0x40 = ld b, b = BGB breakpoint
 	rgblink -n $(@:.gb=.sym) -o $@ -p 0x40 $^
 	rgbfix -v -p 0x40 $(FIXARGS) $@
 
-build/release/tasks/%.gb: tasks/%.asm $(RELEASEOBJS)
+build/release/tasks/%.gb: build/release/tasks/%.o $(RELEASEOBJS)
 	rgblink -n $(@:.gb=.sym) -o $@ $^
 	rgbfix -v -p 0 $(FIXARGS) $@
 
-build/debug build/release:
+build/debug build/release build/debug/tasks build/release/tasks:
 	mkdir -p $@
 
 clean:

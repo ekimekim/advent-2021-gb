@@ -141,10 +141,10 @@ ENDM
 LoadLiteral: MACRO
 	PUSHS
 	SECTION "Inline Literal \@", ROM0
-	lit_\@:
+lit\@:
 	Literal \2
 	POPS
-	ld HL, lit_\@
+	ld HL, lit\@
 ENDM
 
 ENDC
