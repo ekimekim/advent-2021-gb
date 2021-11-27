@@ -31,8 +31,8 @@ Start::
 	; Use core stack
 	ld SP, CoreStack
 
-	; Init font map
 	call GraphicsInit
+	call AllocInit
 
 	; Basic graphics: background on, unsigned tilemap
 	ld A, %10010001

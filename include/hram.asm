@@ -8,4 +8,7 @@ RSSET $ff80
 ; before outputting.
 Ticks rb 4
 
+; ptr - Points to next available byte in allocator
+AllocNext rb 2
+
 ENDC
