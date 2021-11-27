@@ -147,4 +147,10 @@ lit\@:
 	ld HL, lit\@
 ENDM
 
+; calls the function at address in HL
+; uses rst 7 which we have set up as a trampoline
+CallHL: MACRO
+	rst $38
+ENDM
+
 ENDC

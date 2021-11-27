@@ -24,7 +24,8 @@ Restart6::
 	jp HaltForever
 section "Restart handler 7", ROM0 [$38]
 Restart7::
-	jp HaltForever
+	; Trampoline that allows rst $38 to act as a "call HL"
+	jp HL
 
 ; Warning: each of these sections can only be 8b long!
 section "VBlank Interrupt handler", ROM0 [$40]
