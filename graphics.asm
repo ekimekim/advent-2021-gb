@@ -26,10 +26,19 @@ SECTION "Graphics methods", ROM0
 
 
 GraphicsInit::
-	; Identity palette
-    ld A, %11100100
-    ld [TileGridPalette], A
-    ld [SpritePalette0], A
+	; B/W palette in tile palette 0
+    ld A, $80
+	ld [TileGridPaletteIndex], A
+	ld A, $ff
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
+	xor A
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
+	ld [TileGridPaletteData], A
 
     ; Textures into unsigned tilemap
     ld HL, GraphicsTextures
@@ -49,7 +58,7 @@ GraphicsInit::
 ; Go to next line on screen. There is no overrun protection.
 PrintLine::
 	; Find next line by adding 32 then truncate
-	LongAdd PrintNext, 32, HL
+	LongAddParts [PrintNext+1],[PrintNext], 0,32, H,L ; HL = [PrintNext] + 32
 	ld A, %11100000
 	and L ; A = L rounded down to 32
 	ld [PrintNext], A

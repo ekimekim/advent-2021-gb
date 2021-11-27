@@ -44,10 +44,13 @@ Start::
 	ld A, IntEnableVBlank | IntEnableTimer
 	ld [InterruptsEnabled], A
 
-	; Init timer to fire every 2^16 cycles = 2^5 Hz
+	; Init timer to fire every 2^16 cycles = 2^5 Hz and init ticks counter
 	xor A
 	ld [TimerModulo], A
 	ld [TimerCounter], A
+	ld [Ticks+1], A
+	ld [Ticks+2], A
+	ld [Ticks+3], A
 	ld A, TimerEnable | TimerFreq12
 	ld [TimerControl], A
 
@@ -55,11 +58,15 @@ Start::
 	call Main
 	di
 
-	; Save timer last digit
+	; Save timer last digit, then disable timer
 	ld A, [TimerCounter]
 	ld [Ticks], A
+	xor A
+	ld [TimerControl], A
+	; Print requires interrupts to work
+	ei
 	; Print timer
-	LoadLiteral HL, "Done. Ticks: "
+	LoadLiteral HL, "Done in: "
 	call Print
 	ld HL, Ticks
 	call U32PtrToStr

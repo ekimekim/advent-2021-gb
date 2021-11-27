@@ -41,7 +41,7 @@ AllocBytes::
 
 	; if new next high byte > df, we're out of space
 	cp $df ; set c if > df
-	ret nc
+	ret c
 
 	; Allocation failure!
 	LoadLiteral HL, "Out of Cheese!"

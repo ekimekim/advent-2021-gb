@@ -123,6 +123,8 @@ _Check5: MACRO
 	dec B
 	jp nz, .loop
 
+	ret
+
 
 ; Convert BCD from CDEHL into newly allocated str without leading zeroes, return str addr in HL
 _BCDToStr:
@@ -132,11 +134,11 @@ _BCDToStr:
 _CheckZero: MACRO
 	ld A, $f0
 	and \1
-	jr nz, .zerofound
+	jr nz, .nonzerofound
 	dec B
 	ld A, $0f
 	and \1
-	jr nz, .zerofound
+	jr nz, .nonzerofound
 	dec B
 ENDM
 
@@ -146,51 +148,57 @@ ENDM
 	_CheckZero H
 	_CheckZero L
 
-.zerofound
+.nonzerofound
 	; if length is 0, length should be 1 for "0"
 	ld A, B
 	and A
-	jr nz, .nonzero
+	jr nz, .nonzerolen
 	inc A
-.nonzero
+.nonzerolen
 
 	push BC
 	push DE
 	push HL
 	call NewString ; allocate str of length A, returns into HL
 
-	; move HL to last char of str
+	; move HL to last char of str. set B to length again.
 	ld A, [HL]
+	ld B, A
 	LongAddToA HL, HL
 
-; \1 = source reg, \2 = whether to use high half, \3 = break if zero
+; \1 = source reg, \2 = whether to use high half, \3 = where to break to
 _WriteDigit: MACRO
 	ld A, \1
 IF \2 == 1
 	swap A
 ENDC
 	and $0f
-IF \3 == 1
-	ret z
-ENDC
 	add 48
 	ld [HL-], A
+	dec B
+	jr z, \3
 ENDM
 
 	pop DE ; pop old HL into DE
-	_WriteDigit E, 0, 0
-	_WriteDigit E, 1, 1
-	_WriteDigit D, 0, 1
-	_WriteDigit D, 1, 1
+	_WriteDigit E, 0, .pop2
+	_WriteDigit E, 1, .pop2
+	_WriteDigit D, 0, .pop2
+	_WriteDigit D, 1, .pop2
 	pop DE ; pop old DE into DE
-	_WriteDigit E, 0, 1
-	_WriteDigit E, 1, 1
-	_WriteDigit D, 0, 1
-	_WriteDigit D, 1, 1
+	_WriteDigit E, 0, .pop1
+	_WriteDigit E, 1, .pop1
+	_WriteDigit D, 0, .pop1
+	_WriteDigit D, 1, .pop1
 	pop DE ; pop old BC into DE
-	_WriteDigit E, 0, 1
-	_WriteDigit E, 1, 1
-	_WriteDigit D, 0, 1
-	_WriteDigit D, 1, 1
+	_WriteDigit E, 0, .pop0
+	_WriteDigit E, 1, .pop0
+	_WriteDigit D, 0, .pop0
+	_WriteDigit D, 1, .pop0
 
+.pop0
+	ret
+.pop2
+	pop DE
+.pop1
+	pop DE
 	ret
