@@ -123,4 +123,28 @@ AbsDiff: MACRO
 .positive\@
 ENDM
 
+; Define a string literal with content \1. This should be called in a ROM section, eg.
+;   MyLiteral:
+;   Literal "hello"
+; Strings are length-prefixed with a u8.
+Literal: MACRO
+	db STRLEN(\1), \1
+ENDM
+
+; Define a string litreral with content \2 in ROM, and place its address
+; in \1. This is intended to be used inline, eg.
+;   push HL
+;   LoadLiteral HL, "foobar"
+;   ; HL now points to the "foobar" string
+;   ; use it
+;   pop HL
+LoadLiteral: MACRO
+	PUSHS
+	SECTION "Inline Literal \@", ROM0
+	lit_\@:
+	Literal \2
+	POPS
+	ld HL, lit_\@
+ENDM
+
 ENDC

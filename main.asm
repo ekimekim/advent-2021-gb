@@ -57,10 +57,10 @@ Start::
 	ld A, [TimerCounter]
 	ld [Ticks], A
 	; Print timer
-	Literal HL, "Done. Ticks: "
+	LoadLiteral HL, "Done. Ticks: "
 	call Print
 	ld HL, Ticks
-	call U32ToStr
+	call U32PtrToStr
 	call Print
 
 	jp HaltForever
