@@ -21,16 +21,29 @@ Main::
 	call PrintLine
 
 	ld B, INPUT_LENGTH
-	call AllocBytes
-	push BC
-	push HL
+	ld HL, Input
+	ld C, "\n"
+	call StringSplit
+
 	ld D, H
 	ld E, L
-	ld HL, Input
-	Copy
-	pop HL
-	pop BC
+	ld HL, PrintEach
+	call ListMap
+
+	ret
+
+PrintEach:
+	; length
+	ld A, [DE]
+	ld B, A
+	; addr
+	inc DE
+	ld A, [DE]
+	ld L, A
+	inc DE
+	ld A, [DE]
+	ld H, A
 	call Print
 	call PrintLine
-
+	xor A
 	ret
