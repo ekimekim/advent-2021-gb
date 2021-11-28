@@ -148,6 +148,22 @@ LoadLiteral: MACRO
 	ld B, inline_lit\@_len
 ENDM
 
+; Prints \1 and halts execution
+Crash: MACRO
+	LoadLiteral \1
+	call Print
+	jp HaltForever
+ENDM
+
+; If jump condition \1 is not met, print \2 and halt execution
+; eg. CrashIfNot nc, "Overflow"
+; will crash with "Overflow" if carry flag is set
+CrashIfNot: MACRO
+	jr \1, .nocrash\@
+	Crash \2
+.nocrash\@
+ENDM
+
 ; calls the function at address in HL
 ; uses rst 7 which we have set up as a trampoline
 CallHL: MACRO

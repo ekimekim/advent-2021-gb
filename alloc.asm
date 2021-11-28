@@ -44,6 +44,4 @@ AllocBytes::
 	ret c
 
 	; Allocation failure!
-	LoadLiteral "!OOM!"
-	call Print
-	jp HaltForever
+	Crash "!OOM!"

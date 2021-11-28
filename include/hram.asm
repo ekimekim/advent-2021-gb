@@ -17,5 +17,9 @@ PrintNext rb 2
 ; bool - Set to 1 then wait for it to become 0 to indicate new frame started
 WaitingForFrame rb 1
 
+; general purpose scratch space for temporary variables.
+; assume these are clobbered if you call any other function.
+Scratch rb 4
+
 
 ENDC

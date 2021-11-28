@@ -1,5 +1,5 @@
-include "debug.asm"
 include "longcalc.asm"
+include "macros.asm"
 
 SECTION "Conversion temp buffers", WRAM0
 
@@ -195,8 +195,7 @@ ENDM
 	_WriteDigit E, 0, .pop0
 	_WriteDigit E, 1, .pop0
 
-	Debug "Unreachable"
-	jp HaltForever
+	Crash "!Conv Bug!"
 
 .pop0
 	ld B, D

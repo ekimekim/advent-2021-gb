@@ -63,6 +63,8 @@ Start::
 	ld [Ticks], A
 	xor A
 	ld [TimerControl], A
+	; Reset allocator to ensure we don't OOM trying to display timer
+	call AllocInit
 	; Print requires interrupts to work
 	ei
 	; Print timer
