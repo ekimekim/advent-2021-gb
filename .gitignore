@@ -3,3 +3,6 @@
 *.o
 
 include/assets/*
+include/inputs/*
+
+.cookie

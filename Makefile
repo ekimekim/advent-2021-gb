@@ -26,6 +26,12 @@ testroms: tests/.uptodate
 tests: testroms
 	tools/runtests
 
+include/inputs/test.asm: include/inputs
+	echo "db 50, 48, 50, 49, 10, 102, 111, 111, 10" > $@
+
+include/inputs/%.asm: tools/get_input.py .cookie include/inputs
+	python tools/get_input.py $@
+
 include/assets/.uptodate: $(ASSETS) tools/assets_to_asm.py
 	python tools/assets_to_asm.py assets/ include/assets/
 	touch $@
@@ -36,10 +42,10 @@ build/debug/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/debug
 build/release/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/release
 	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
 
-build/debug/tasks/%.o: tasks/%.asm build/debug/tasks
+build/debug/tasks/%.o: tasks/%.asm build/debug/tasks include/inputs/%.asm
 	rgbasm -DDEBUG=1 -i include/ -v -o $@ $<
 
-build/release/tasks/%.o: tasks/%.asm build/release/tasks
+build/release/tasks/%.o: tasks/%.asm build/release/tasks include/inputs/%.asm
 	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
 
 build/debug/tasks/%.gb: build/debug/tasks/%.o $(DEBUGOBJS)
@@ -51,7 +57,7 @@ build/release/tasks/%.gb: build/release/tasks/%.o $(RELEASEOBJS)
 	rgblink -n $(@:.gb=.sym) -o $@ $^
 	rgbfix -v -p 0 $(FIXARGS) $@
 
-build/debug build/release build/debug/tasks build/release/tasks:
+build/debug build/release build/debug/tasks build/release/tasks include/inputs:
 	mkdir -p $@
 
 clean:
