@@ -123,28 +123,29 @@ AbsDiff: MACRO
 .positive\@
 ENDM
 
-; Define a string literal with content \1. This should be called in a ROM section, eg.
-;   MyLiteral:
-;   Literal "hello"
-; Strings are length-prefixed with a u8.
+; Define a string literal named \1 with content \2. This should be called in a ROM section, eg.
+;   Literal MyHello "hello"
+; Also defines \1_len (eg. MyHello_len above) as a constant.
 Literal: MACRO
-	db STRLEN(\1), \1
+\1:
+	db \2
+\1_len EQU STRLEN(\2)
 ENDM
 
 ; Define a string litreral with content \2 in ROM, and place its address
-; in \1. This is intended to be used inline, eg.
+; in HL and length in B. This is intended to be used inline, eg.
 ;   push HL
-;   LoadLiteral HL, "foobar"
-;   ; HL now points to the "foobar" string
+;   LoadLiteral "foobar"
+;   ; HL now points to the "foobar" string, and B is 6
 ;   ; use it
 ;   pop HL
 LoadLiteral: MACRO
 	PUSHS
 	SECTION "Inline Literal \@", ROM0
-lit\@:
-	Literal \2
+	Literal inline_lit\@, \1
 	POPS
-	ld HL, lit\@
+	ld HL, inline_lit\@
+	ld B, inline_lit\@_len
 ENDM
 
 ; calls the function at address in HL

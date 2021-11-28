@@ -67,7 +67,7 @@ PrintLine::
 	ret
 
 
-; Print string pointed to by HL, and move print head by that far.
+; Print string with length B and addr HL, and move print head by that far.
 ; Blocks until next vblank.
 ; There is no overrun protection or line wrapping.
 Print::
@@ -86,11 +86,10 @@ Print::
 	ld A, [PrintNext+1]
 	ld D, A
 
-	; B = str length and set HL to str start. early exit if len=0
-	ld A, [HL+]
-	and A
+	; early exit if empty string
+	xor A
+	or B
 	ret z
-	ld B, A
 
 .loop
 	ld A, [HL+]

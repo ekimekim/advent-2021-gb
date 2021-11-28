@@ -20,39 +20,30 @@ AllocInit::
 	ret
 
 
-; Allocate A bytes, returning the start of the section in HL
-; Preserves DE
+; Allocate B bytes, returning the start of the section in HL
+; Preserves BC, DE
 AllocBytes::
-	ld B, A
-
 	ld A, [AllocNext]
 	ld L, A
 	ld A, [AllocNext+1]
 	ld H, A
 
+	push HL
 	ld A, B
-	LongAddToA HL, BC
-	; BC = new AllocNext
+	LongAddToA HL, HL
+	; HL = new AllocNext
 
-	ld A, C
+	ld A, L
 	ld [AllocNext], A
-	ld A, B
+	ld A, H
 	ld [AllocNext+1], A
+	pop HL
 
 	; if new next high byte > df, we're out of space
 	cp $df ; set c if > df
 	ret c
 
 	; Allocation failure!
-	LoadLiteral HL, "Out of Cheese!"
+	LoadLiteral "!OOM!"
 	call Print
 	jp HaltForever
-
-
-; Allocate a string of length A, and set the length
-NewString::
-	ld D, A
-	inc A
-	call AllocBytes ; alloc length+1 for prefix byte
-	ld [HL], D ; set prefix byte
-	ret

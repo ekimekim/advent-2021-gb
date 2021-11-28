@@ -1,3 +1,4 @@
+include "debug.asm"
 include "longcalc.asm"
 
 SECTION "Conversion temp buffers", WRAM0
@@ -7,7 +8,7 @@ ds 4 ; store up to uint32, little endian as normal
 
 SECTION "Conversion functions", ROM0
 
-; *PtrToStr: Convert pointed-to value in HL to str, put str in HL
+; *PtrToStr: Convert pointed-to value in HL to str, put str in (B, HL)
 
 U8PtrToStr::
 	ld A, [HL]
@@ -29,7 +30,7 @@ U32PtrToStr::
 	ld L, A
 	jp U32ToStr
 
-; *ToStr: Convert value from regs into str, put str in HL
+; *ToStr: Convert value from regs into str, put str in (B, HL)
 ; 8: A, 16: DE, 32: HLDE
 U8ToStr::
 	ld A, E
@@ -126,7 +127,8 @@ _Check5: MACRO
 	ret
 
 
-; Convert BCD from CDEHL into newly allocated str without leading zeroes, return str addr in HL
+; Convert BCD from CDEHL into newly allocated str without leading zeroes,
+; return str len in B, addr in HL
 _BCDToStr:
 	; Determine length, put in B
 	ld B, 10
@@ -150,20 +152,20 @@ ENDM
 
 .nonzerofound
 	; if length is 0, length should be 1 for "0"
-	ld A, B
-	and A
+	xor A
+	or B
 	jr nz, .nonzerolen
-	inc A
+	inc B
 .nonzerolen
 
 	push BC
 	push DE
 	push HL
-	call NewString ; allocate str of length A, returns into HL
+	call AllocBytes ; allocate str of length B, returns into HL
 
-	; move HL to last char of str. set B to length again.
-	ld A, [HL]
-	ld B, A
+	; move HL to last char of str (add length-1)
+	ld A, B
+	dec A
 	LongAddToA HL, HL
 
 ; \1 = source reg, \2 = whether to use high half, \3 = where to break to
@@ -189,16 +191,20 @@ ENDM
 	_WriteDigit E, 1, .pop1
 	_WriteDigit D, 0, .pop1
 	_WriteDigit D, 1, .pop1
-	pop DE ; pop old BC into DE
+	pop DE ; pop old BC into DE. Note D is now original length.
 	_WriteDigit E, 0, .pop0
 	_WriteDigit E, 1, .pop0
-	_WriteDigit D, 0, .pop0
-	_WriteDigit D, 1, .pop0
+
+	Debug "Unreachable"
+	jp HaltForever
 
 .pop0
+	ld B, D
+	inc HL ; correct HL back to start of string, instead of 1 before
 	ret
 .pop2
-	pop DE
+	pop BC
 .pop1
-	pop DE
+	pop BC ; final pop restores original length to B
+	inc HL ; correct HL back to start of string, instead of 1 before
 	ret

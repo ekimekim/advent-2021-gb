@@ -66,7 +66,7 @@ Start::
 	; Print requires interrupts to work
 	ei
 	; Print timer
-	LoadLiteral HL, "Done in: "
+	LoadLiteral "Done in: "
 	call Print
 	ld HL, Ticks
 	call U32PtrToStr
