@@ -1,0 +1,20 @@
+
+include "macros.asm"
+include "hram.asm"
+include "longcalc.asm"
+
+
+SECTION "Input", ROMX, BANK[1]
+
+Input:
+include "inputs/NAME.asm"
+EndInput:
+INPUT_LENGTH = EndInput - Input
+
+
+SECTION "Main", ROM0
+
+
+Main::
+
+	ret

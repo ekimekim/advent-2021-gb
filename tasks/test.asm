@@ -1,15 +1,19 @@
 
 include "macros.asm"
+include "hram.asm"
+include "longcalc.asm"
+
 
 SECTION "Input", ROMX, BANK[1]
 
 Input:
 include "inputs/test.asm"
 EndInput:
-
 INPUT_LENGTH = EndInput - Input
 
+
 SECTION "Test", ROM0
+
 
 Main::
 	LoadLiteral "Test number: "
@@ -31,6 +35,7 @@ Main::
 	call ListMap
 
 	ret
+
 
 PrintEach:
 	; length
