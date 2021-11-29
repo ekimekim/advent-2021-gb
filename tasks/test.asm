@@ -16,11 +16,13 @@ SECTION "Test", ROM0
 
 
 Main::
-	LoadLiteral "Test number: "
+	LoadLiteral "Number: "
 	call Print
-	ld D, HIGH(1234)
-	ld E, LOW(1234)
-	call U16ToStr
+	; print 1234 * 4321 (should be 5332114)
+	ld BC, 1234
+	ld HL, 4321
+	call U16Mul
+	call U32ToStr
 	call Print
 	call PrintLine
 
