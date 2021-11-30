@@ -123,6 +123,32 @@ AbsDiff: MACRO
 .positive\@
 ENDM
 
+; Define a variable in WRAM0 named \1 with size \2.
+; This is intended to be used inline, eg.
+;   Declare Foo, 2
+;   xor A
+;   ld [Foo], A
+;   ld [Foo+1], A
+Declare: MACRO
+	PUSHS
+	SECTION "Inline Variable \@", WRAM0
+\1:
+	ds \2
+	POPS
+ENDM
+
+; As Declare but initialize all bytes to 8-bit value in \3.
+; Clobbers A.
+DeclareSet:
+	Declare \1, \2
+	ld A, \3
+idx\@ = 0
+REPT \2
+	ld [\1 + idx\@], A
+idx\@ = idx\@ + 1
+ENDR
+ENDM
+
 ; Define a string literal named \1 with content \2. This should be called in a ROM section, eg.
 ;   Literal MyHello "hello"
 ; Also defines \1_len (eg. MyHello_len above) as a constant.
