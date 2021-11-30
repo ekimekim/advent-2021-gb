@@ -196,4 +196,31 @@ CallHL: MACRO
 	rst $38
 ENDM
 
+; LoadAll ADDR, REG{, REG}
+; Loads value at ADDR, ADDR+1, ADDR+2, etc into each reg given.
+; REG cannot be A. Clobbers A.
+LoadAll: MACRO
+idx\@ = 0
+REPT _NARG
+	ld A, [(\1)+idx\@]
+	ld \2, A
+SHIFT
+idx\@ = idx\@ + 1
+ENDR
+ENDM
+
+; StoreAll ADDR, REG{, REG}
+; Stores value into ADDR, ADDR+1, ADDR+2, etc from each reg given.
+; REG cannot be A. Clobbers A.
+StoreAll: MACRO
+idx\@ = 0
+REPT _NARG
+	ld A, \2
+	ld [(\1)+idx\@], A
+SHIFT
+idx\@ = idx\@ + 1
+ENDR
+ENDM
+
+
 ENDC

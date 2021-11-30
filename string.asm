@@ -105,6 +105,7 @@ StringSplit::
 
 	ret
 
+
 ; counts instances of C in (B, HL), returns in A. If c set, count was > 255.
 StringCount::
 	; check for empty string
@@ -130,3 +131,10 @@ StringCount::
 .overflow
 	scf ; set carry
 	ret
+
+
+; Removes leading or trailing instances of character C from string (B, HL),
+; returning the new string in (B, HL). Preserves C.
+StringTrim::
+	; TODO
+	Crash "!Unimp:Trim"
