@@ -7,7 +7,8 @@ import requests
 
 def main(outfile, cookiepath='.cookie', year='2021', chunksize=16):
 	cookie = open(cookiepath).read().strip()
-	day, _ = os.path.splitext(os.path.basename(outfile))
+	name, _ = os.path.splitext(os.path.basename(outfile))
+	day = name.split("-")[0]
 	resp = requests.get('https://adventofcode.com/{}/day/{}/input'.format(year, day), headers={"Cookie": cookie})
 	resp.raise_for_status()
 	data = resp.content

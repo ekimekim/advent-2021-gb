@@ -51,12 +51,20 @@ U32ToStr::
 	call _U32ToBCD
 	jp _BCDToStr
 
-; Convert str in (B, HL) to u32 in HLDE, or set z on error.
+; StrTo*: Convert str in (B, HL) to value from regs, or set z on error
+; 8: A, 16: DE, 32: HLDE
+
+StrToU8::
+	call StrToU32
+	ld A, E
+	ret
+
+StrToU16::
 StrToU32::
 	call _StrToBCD
 	ret z
 	call _BCDToU32
-	StoreAll IntBuffer, E,D,L,H
+	LoadAll IntBuffer, E,D,L,H
 	or $ff ; unset z
 	ret
 
@@ -145,8 +153,8 @@ _BCDToU32:
 _Check8: MACRO
     ld A, \1
     and $0f << \2
-    cp 9 << \2
-    jr c, .lessThan9\@
+    cp 8 << \2
+    jr c, .lessThan8\@
     sub 3 << \2
 	push BC
     ld B, A
@@ -155,21 +163,10 @@ _Check8: MACRO
     or B ; combine with new value for this half
 	pop BC
     ld \1, A
-.lessThan9\@
+.lessThan8\@
     ENDM
 
 .loop
-	_Check8 C, 0
-	_Check8 C, 4
-	_Check8 D, 0
-	_Check8 D, 4
-	_Check8 E, 0
-	_Check8 E, 4
-	_Check8 H, 0
-	_Check8 H, 4
-	_Check8 L, 0
-	_Check8 L, 4
-
 	srl C
 	rr D
 	rr E
@@ -187,6 +184,17 @@ _Check8: MACRO
 	ld A, [IntBuffer]
 	rra
 	ld [IntBuffer], A
+
+	_Check8 C, 0
+	_Check8 C, 4
+	_Check8 D, 0
+	_Check8 D, 4
+	_Check8 E, 0
+	_Check8 E, 4
+	_Check8 H, 0
+	_Check8 H, 4
+	_Check8 L, 0
+	_Check8 L, 4
 
 	dec B
 	jp nz, .loop

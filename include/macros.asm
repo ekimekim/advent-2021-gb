@@ -142,10 +142,10 @@ ENDM
 DeclareSet: MACRO
 	Declare \1, \2
 	ld A, \3
-idx\@ = 0
+_declareset_idx = 0
 REPT \2
-	ld [\1 + idx\@], A
-idx\@ = idx\@ + 1
+	ld [\1 + _declareset_idx], A
+_declareset_idx = _declareset_idx + 1
 ENDR
 ENDM
 

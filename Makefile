@@ -1,6 +1,6 @@
 
 # avoid implicit rules for clarity
-.SUFFIXES: .asm .o .gb
+.SUFFIXES:
 .PHONY: bgb clean debug tests testroms
 
 ASMS := $(wildcard *.asm)
@@ -40,12 +40,6 @@ build/debug/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/debug
 	rgbasm -DDEBUG=1 -i include/ -v -o $@ $<
 
 build/release/%.o: %.asm $(INCLUDES) include/assets/.uptodate build/release
-	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
-
-build/debug/tasks/%.o: tasks/%.asm build/debug/tasks include/inputs/%.asm
-	rgbasm -DDEBUG=1 -i include/ -v -o $@ $<
-
-build/release/tasks/%.o: tasks/%.asm build/release/tasks include/inputs/%.asm
 	rgbasm -DDEBUG=0 -i include/ -v -o $@ $<
 
 build/debug/tasks/%.gb: build/debug/tasks/%.o $(DEBUGOBJS)
