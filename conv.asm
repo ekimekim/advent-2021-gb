@@ -47,7 +47,7 @@ U16ToStr::
 	jp U32ToStr
 
 U32ToStr::
-	LoadAll IntBuffer, E,D,L,H
+	StoreAll IntBuffer, E,D,L,H
 	call _U32ToBCD
 	jp _BCDToStr
 
@@ -145,8 +145,8 @@ _BCDToU32:
 _Check8: MACRO
     ld A, \1
     and $0f << \2
-    cp 8 << \2
-    jr c, .lessThan8\@
+    cp 9 << \2
+    jr c, .lessThan9\@
     sub 3 << \2
 	push BC
     ld B, A
@@ -283,7 +283,7 @@ _StrToBCD::
 	and A
 	ret z ; return error if length = 0
 	cp 11 ; set c if <= 10
-	jr nc, .error
+	jp nc, .error
 
 	; move HL to point to last char of string
 	ld A, B
@@ -294,22 +294,22 @@ _StrToBCD::
 _ReadDigit: MACRO
 	ld A, [HL-]
 	sub 48
-	jr c, .error ; error: char < '0'
+	jp c, .error ; error: char < '0'
 	cp 58
-	jr nc, .error ; error: char > '9'
+	jp nc, .error ; error: char > '9'
 	ld \1, A ; store (0, lower digit)
 	dec B
-	jr z, \2
+	jp z, \2
 	ld A, [HL-]
 	sub 48
-	jr c, .error ; error: char < '0'
+	jp c, .error ; error: char < '0'
 	cp 58
-	jr nc, .error ; error: char > '9'
+	jp nc, .error ; error: char > '9'
 	swap A ; A = (upper digit, 0)
 	or \1 ; A = (upper digit, lower digit)
 	ld \1, A
 	dec B
-	jr z, \2
+	jp z, \2
 ENDM
 
 	; read into DE first but these 2 digits will eventually be in HL

@@ -70,8 +70,17 @@ Start::
 	; Print timer
 	LoadLiteral "Done in: "
 	call Print
-	ld HL, Ticks
-	call U32PtrToStr
+	LoadAll Ticks, E,D,L,H
+	; divide by 8 so we're in units of 2^-10 ~= ms
+REPT 3
+	srl H
+	rr L
+	rr D
+	rr E
+ENDR
+	call U32ToStr
+	call Print
+	LoadLiteral "ms"
 	call Print
 
 	jp HaltForever

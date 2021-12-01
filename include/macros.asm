@@ -139,7 +139,7 @@ ENDM
 
 ; As Declare but initialize all bytes to 8-bit value in \3.
 ; Clobbers A.
-DeclareSet:
+DeclareSet: MACRO
 	Declare \1, \2
 	ld A, \3
 idx\@ = 0
@@ -200,26 +200,32 @@ ENDM
 ; Loads value at ADDR, ADDR+1, ADDR+2, etc into each reg given.
 ; REG cannot be A. Clobbers A.
 LoadAll: MACRO
-idx\@ = 0
-REPT _NARG
-	ld A, [(\1)+idx\@]
-	ld \2, A
+_loadall_idx = 0
+_loadall_base EQUS "\1"
 SHIFT
-idx\@ = idx\@ + 1
+REPT _NARG
+	ld A, [(_loadall_base)+_loadall_idx]
+	ld \1, A
+SHIFT
+_loadall_idx = _loadall_idx + 1
 ENDR
+PURGE _loadall_base
 ENDM
 
 ; StoreAll ADDR, REG{, REG}
 ; Stores value into ADDR, ADDR+1, ADDR+2, etc from each reg given.
 ; REG cannot be A. Clobbers A.
 StoreAll: MACRO
-idx\@ = 0
-REPT _NARG
-	ld A, \2
-	ld [(\1)+idx\@], A
+_storeall_idx = 0
+_storeall_base EQUS "\1"
 SHIFT
-idx\@ = idx\@ + 1
+REPT _NARG
+	ld A, \1
+	ld [(_storeall_base)+_storeall_idx], A
+SHIFT
+_storeall_idx = _storeall_idx + 1
 ENDR
+PURGE _storeall_base
 ENDM
 
 
