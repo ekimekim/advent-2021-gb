@@ -85,16 +85,30 @@ LongSub: MACRO
 	LongSubParts HIGH(\1),LOW(\1), HIGH(\2),LOW(\2), HIGH(\3),LOW(\3)
 	ENDM
 
-; Compare 16-bit reg pairs or immediates \1\2 and \3\4, setting zero and carry as per normal cp.
+; Compare 16-bit reg pairs or immediates \1\2 and \3\4, setting carry if \1\2 < \3\4.
 ; Clobbers A.
-LongCPParts: MACRO
+LongLTParts: MACRO
 	ld A, \2
 	sub \4
 	ld A, \1
 	sbc \3
 	ENDM
-LongCP: MACRO
-	LongCPParts HIGH(\1),LOW(\1), HIGH(\2),LOW(\2)
+LongLT: MACRO
+	LongLTParts HIGH(\1),LOW(\1), HIGH(\2),LOW(\2)
+ENDM
+
+; Compare 16-bit reg pairs or immediates \1\2 and \3\4, setting zero if \1\2 == \3\4.
+; Clobbers A.
+LongEQParts:MACRO
+	ld A, \2
+	cp \4
+	jr nz, .done\@
+	ld A, \1
+	cp \3
+.done\@
+ENDM
+LongEQ: MACRO
+	LongEQParts HIGH(\1),LOW(\1), HIGH(\2),LOW(\2)
 ENDM
 
 ; Shift 16-bit reg pair \1\2 (not AF) left once. Sets carry as per normal shift.

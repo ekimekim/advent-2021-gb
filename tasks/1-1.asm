@@ -2,6 +2,7 @@
 include "macros.asm"
 include "hram.asm"
 include "longcalc.asm"
+include "debug.asm"
 
 
 SECTION "Input", ROMX, BANK[1]
@@ -22,7 +23,7 @@ Main::
 	DeclareSet PrevValue, 2, $ff
 
 IF DEBUG > 0
-	LoadAll EndInput, E,D
+	ld DE, EndInput
 	call U16ToStr
 	call Print
 	call PrintLine
@@ -55,7 +56,8 @@ ENDC
 
 	; set c if PrevValue < HL
 	LoadAll PrevValue, C,B
-	LongCP BC, HL
+	LongLT BC, HL
+	Debug "%DE%: %BC% < %HL%? %CARRY%"
 	jr nc, .nocount
 
 	LoadAll Count, C,B
@@ -79,8 +81,8 @@ IF DEBUG > 0
 ENDC
 
 	; Check if we're at EOF
-	LoadAll EndInput, C,B
-	LongCP BC, DE ; set z if EOF
+	ld BC, EndInput
+	LongEQ BC, DE ; set z if EOF
 
 	jr nz, .mainloop
 
