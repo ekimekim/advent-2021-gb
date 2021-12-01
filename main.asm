@@ -92,8 +92,10 @@ TimerHandler::
 	ld A, [Ticks+1]
 	inc A
 	ld [Ticks+1], A
+	jr nz, .nocarry
 	ld A, [Ticks+2]
-	adc 0
+	inc A
 	ld [Ticks+2], A
+.nocarry
 	pop AF
 	reti

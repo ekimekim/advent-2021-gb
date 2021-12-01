@@ -45,3 +45,14 @@ AllocBytes::
 
 	; Allocation failure!
 	Crash "!OOM!"
+
+
+; Returns a value in HL that can later be passed to AllocFree
+AllocMark::
+	LoadAll AllocNext, L,H
+	ret
+
+; Takes a value from AllocMark in HL that frees all memory allocated since AllocMark was called
+AllocFree::
+	StoreAll AllocNext, L,H
+	ret

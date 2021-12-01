@@ -67,6 +67,15 @@ PrintLine::
 	ret
 
 
+; Go to start of current line on screen. Old chars will still be there unless overwritten.
+ResetLine::
+	; Truncate to mod 32
+	ld A, [PrintNext]
+	and %11100000
+	ld [PrintNext], A
+	ret
+
+
 ; Print string with length B and addr HL, and move print head by that far.
 ; Blocks until next vblank.
 ; There is no overrun protection or line wrapping.
