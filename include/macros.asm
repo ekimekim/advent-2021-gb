@@ -137,7 +137,7 @@ Declare: MACRO
 	POPS
 ENDM
 
-; As Declare but initialize all bytes to 8-bit value in \3.
+; As Declare but initialize all bytes to 8-bit immediate or non-A reg in \3.
 ; Clobbers A.
 DeclareSet: MACRO
 	Declare \1, \2

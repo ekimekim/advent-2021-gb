@@ -93,7 +93,7 @@ ENDC
 	ld BC, EndInput
 	LongEQ BC, DE ; set z if EOF
 
-	jr nz, .mainloop
+	jd nz, .mainloop
 
 	LoadLiteral "Result: "
 	call Print

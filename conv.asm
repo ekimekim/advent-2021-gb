@@ -33,7 +33,7 @@ U32PtrToStr::
 ; *ToStr: Convert value from regs into str, put str in (B, HL)
 ; 8: A, 16: DE, 32: HLDE
 U8ToStr::
-	ld A, E
+	ld E, A
 	xor A
 	ld D, A
 	ld L, A

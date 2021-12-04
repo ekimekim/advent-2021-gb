@@ -1,5 +1,6 @@
 include "macros.asm"
 include "hram.asm"
+include "longcalc.asm"
 
 SECTION "String methods", ROM0
 
@@ -138,3 +139,38 @@ StringCount::
 StringTrim::
 	; TODO
 	Crash "!Unimp:Trim"
+
+
+; For a long string (with 16-bit length) in (DE, HL),
+; find the next instance of character C and return how many characters preceeded it in B.
+; (DE, HL) points to the remaining long string (starting after the C character).
+; Sets z if the string does not contain C. Sets c if B would be > 255.
+; In other words, if the caller saves HL before calling, then after calling (B, old HL) is the
+; string up to C, and (DE, HL) is the long string following C.
+LongStringNext::
+	; fast exit if DE == 0
+	LongEQ DE, 0
+	ret z
+	ld B, 0
+.loop
+	ld A, [HL+]
+	cp C
+	jr z, .found
+	; inc B and check overflow
+	inc B
+	jr z, .overflow
+	; dec DE and check zero
+	dec DE
+	xor A
+	or E
+	jr nz, .loop
+	or D
+	jr nz, .loop
+	; DE == 0, z is already set
+	ret
+.overflow
+	scf ; set carry
+	ret
+.found
+	xor A ; clear z
+	ret
